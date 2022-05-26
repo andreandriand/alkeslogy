@@ -35,14 +35,14 @@ Route::resource('favorite', \App\Http\Controllers\FavoriteController::class)->on
 Route::resource('cart', \App\Http\Controllers\CartController::class)->only(['index','store','update', 'destroy']);
 
 Route::group(['middleware' => 'auth'], function() {
-
+    
     Route::get('profile', [\App\Http\Controllers\Auth\ProfileController::class, 'index'])->name('profile.index');
     Route::put('profile', [\App\Http\Controllers\Auth\ProfileController::class, 'update'])->name('profile.update');
-
+    
     Route::get('orders/checkout', [\App\Http\Controllers\OrderController::class, 'process'])->name('checkout.process');
     Route::get('orders/cities', [\App\Http\Controllers\OrderController::class, 'cities']);
     Route::post('orders/shipping-cost', [\App\Http\Controllers\OrderController::class, 'shippingCost']);
-    Route::post('orders/set-shipping', [\App\Http\Controllers\OrderController::class, 'setShipping']);
+    Route::POST('orders/set-shipping', [\App\Http\Controllers\OrderController::class, 'setShipping']);
     Route::post('orders/checkout', [\App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout');
     Route::get('orders/received/{orderId}', [\App\Http\Controllers\OrderController::class, 'received'])->name('checkout.received');
     Route::get('orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');

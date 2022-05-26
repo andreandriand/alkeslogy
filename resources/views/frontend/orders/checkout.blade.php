@@ -219,7 +219,8 @@
 									</tr>
 									<tr class="cart-subtotal">
 										<th>Shipping Cost ({{ $totalWeight }} gram)</th>
-										<td><select id="shipping-cost-option" required name="shipping_service"></select></td>
+										<td><select id="shipping-cost-option" required name="shipping_service">
+										</select></td>
 									</tr>
 									<tr class="order-total">
 										<th>Order Total</th>

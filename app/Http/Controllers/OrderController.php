@@ -42,12 +42,12 @@ class OrderController extends Controller
 	public function shippingCost(Request $request)
 	{
 		$items = \Cart::getContent();
-
+		
         $totalWeight = 0;
 		foreach ($items as $item) {
 			$totalWeight += ($item->quantity * $item->associatedModel->weight);
 		}
-
+		$request["city_id"] = "114";
         $destination = $request->input('city_id');
 		return $this->getShippingCost($destination, $totalWeight);
 	}
@@ -103,17 +103,20 @@ class OrderController extends Controller
 		\Cart::removeConditionsByType('shipping');
 
 		$items = \Cart::getContent();
-
+		
         $totalWeight = 0;
 		foreach ($items as $item) {
 			$totalWeight += ($item->quantity * $item->associatedModel->weight);
 		}
 
+		// $shippingService = "JNE-CTYES";
+		// $destination = "179";
 		$shippingService = $request->get('shipping_service');
 		$destination = $request->get('city_id');
-
+		
 		$shippingOptions = $this->getShippingCost($destination, $totalWeight);
-
+		
+		// dd($shippingOptions);
 		$selectedShipping = null;
 		if ($shippingOptions['results']) {
 			foreach ($shippingOptions['results'] as $shippingOption) {

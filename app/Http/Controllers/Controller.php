@@ -33,6 +33,9 @@ class Controller extends BaseController
 	 */
 	public function __construct()
 	{
+		// $this->rajaOngkirApiKey = "f7d8ddbad254de8d083b0530ca1b6c36";
+		// $this->rajaOngkirBaseUrl = "https://api.rajaongkir.com/starter/province";
+		// $this->rajaOngkirOrigin = config('rajaongkir.origin');
 		$this->rajaOngkirApiKey = config('rajaongkir.api_key');
 		$this->rajaOngkirBaseUrl = config('rajaongkir.base_url');
 		$this->rajaOngkirOrigin = config('rajaongkir.origin');

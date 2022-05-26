@@ -116,7 +116,11 @@ function getQuickView(product_slug) {
             },
             success: function (response) {
                 $("#test").val("Loading...");
-                $(".total-amount").html(response.data.total);
+                if(response.status == 400){
+                    alert("Jasa Pengiriman tidak ada di daerah anda\nsilahkan pilih pengirman yang lain")
+                }else{
+                    $(".total-amount").html(response.data.total);
+                }
                 $("#test").val("Place order");
             },
         });

@@ -67,7 +67,7 @@ class CartController extends Controller
 		return redirect()->back()->with([
             'message' => 'success added to cart !',
             'alert-type' => 'success',
-            ]);;
+            ]);
     }
 
     /**
@@ -124,6 +124,6 @@ class CartController extends Controller
         return redirect()->back()->with([
             'message' => 'success deleted !',
             'alert-type' => 'danger'
-        ]);;
+        ]);
     }
 }
