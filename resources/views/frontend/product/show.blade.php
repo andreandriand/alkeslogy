@@ -83,7 +83,9 @@
                             <button type="submit" class="submit contact-btn btn-hover">Tambahkan ke Keranjang</button>
                         </div>
                         <div class="quickview-btn-wishlist">
-                            <a class="btn-hover" href="#"><i class="pe-7s-like"></i></a>
+                            <a class="animate-left add-to-fav" title="Favorite" product-slug="{{ $product->slug }}" href="">
+                                <i class="pe-7s-like"></i>
+                            </a>
                         </div>
                     </div>
                 </form>
@@ -174,7 +176,7 @@
                             @endif
                         </a>
                         <div class="product-action">
-                            <a class="animate-left add-to-fav" title="Wishlist" product-slug="{{ $product->slug }}" href="">
+                            <a class="animate-left add-to-fav" title="Favorite" product-slug="{{ $product->slug }}" href="">
                                 <i class="pe-7s-like"></i>
                             </a>
                             <a class="animate-top add-to-card" title="Add To Cart" href="" product-id="{{ $product->id }}" product-slug="{{ $product->slug }}">

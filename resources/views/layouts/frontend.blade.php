@@ -62,7 +62,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="#">Kontak</a>
+                                    <a href="#">Tentang Kami</a>
                                 </li>
                             </ul>
                         </nav>
