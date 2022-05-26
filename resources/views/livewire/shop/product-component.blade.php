@@ -9,12 +9,12 @@
                         </p>
                     </div>
                     <div wire:ignore class="shop-selector">
-                        <label>Sort By :</label>
+                        <label>Urutkan :</label>
                         <select wire:model="sortingBy" name="sortingBy">
-                            <option value="default">Default sorting</option>
-                            <option value="popularity">Popularity</option>
-                            <option value="low-high">Price: Low to High</option>
-                            <option value="high-low">Price: High to Low</option>
+                            <option value="default">Default</option>
+                            <option value="popularity">Popularitas</option>
+                            <option value="low-high">Harga: Rendah ke Tinggi</option>
+                            <option value="high-low">Harga: Tinggi ke Rendah</option>
                         </select>
 
                     </div>
@@ -32,78 +32,76 @@
             </div>
             <div class="shop-product-content tab-content">
                 <div id="grid-sidebar1" class="tab-pane fade active show">
-                <div class="row">
-                    @forelse ($products as $product)
-                    <div class="col-md-6 col-xl-4">
-                        <div class="product-wrapper mb-30">
-                            <div class="product-img">
-                                <a href="{{ route('product.show', $product->slug) }}">
-                                    @if($product->firstMedia)
-                                        <img src="{{ asset('storage/images/products/' . $product->firstMedia->file_name ) }}"
-                                                alt="{{ $product->name }}" width="150">
-                                    @else
+                    <div class="row">
+                        @forelse ($products as $product)
+                        <div class="col-md-6 col-xl-4">
+                            <div class="product-wrapper mb-30">
+                                <div class="product-img">
+                                    <a href="{{ route('product.show', $product->slug) }}">
+                                        @if($product->firstMedia)
+                                        <img src="{{ asset('storage/images/products/' . $product->firstMedia->file_name ) }}" alt="{{ $product->name }}" width="150">
+                                        @else
                                         <img src="{{ asset('frontend/assets/img/product/book/1.jpg' ) }}" alt="{{ $product->name }}" style="width: 100%;">
-                                    @endif
-                                </a>
-                                <span>hot</span>
-                                <div class="product-action">
-                                    <a class="animate-left add-to-fav" title="Favorite"  product-slug="{{ $product->slug }}" href="">
-                                        <i class="pe-7s-like"></i>
+                                        @endif
                                     </a>
-                                    <a class="animate-top add-to-card" title="Add To Cart" href="" product-id="{{ $product->id }}" product-type="{{ $product->slug }}" product-slug="{{ $product->slug }}">
-                                        <i class="pe-7s-cart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="{{ route('product.show', $product->slug) }}">{{ $product->name }}</a></h4>
-                                <span>Rp.{{ number_format($product->price) }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                        No product found!
-                    @endforelse
-                </div>
-                </div>
-                <div id="grid-sidebar2" class="tab-pane fade">
-                <div class="row">
-                    @forelse ($products as $product)
-                    <div class="col-lg-12">
-                        <div class="product-wrapper mb-30 single-product-list product-list-right-pr mb-60">
-                            <div class="product-img list-img-width">
-                                <a href="{{ route('product.show', $product->slug) }}">
-                                    @if($product->firstMedia)
-                                        <img src="{{ asset('storage/images/products/' . $product->firstMedia->file_name ) }}"
-                                                alt="{{ $product->name }}" width="150">
-                                    @else
-                                        <img src="{{ asset('frontend/assets/img/product/book/1.jpg' ) }}" alt="{{ $product->name }}" style="width: 100%;">
-                                    @endif
-                                </a>
-                                <span>hot</span>
-                            </div>
-                            <div class="product-content-list">
-                                <div class="product-list-info">
-                                    <h4><a href="{{ route('product.show', $product->slug) }}">{{ $product->name }}</a></h4>
-                                    <span>Rp.{{ number_format($product->price) }}</span>
-                                    <p>{!! $product->description !!}</p>
-                                </div>
-                                <div class="product-list-cart-wishlist">
-                                    <div class="product-list-cart">
-                                        <a class="btn-hover list-btn-style add-to-card"  product-id="{{ $product->id }}" product-type="{{ $product->slug }}" product-slug="{{ $product->slug }}">add to cart</a>
-                                    </div>
-                                    <div class="product-list-wishlist">
-                                        <a class="btn-hover list-btn-wishlist add-to-fav" title="Favorite"  product-slug="{{ $product->slug }}" href="">
+                                    <span>hot</span>
+                                    <div class="product-action">
+                                        <a class="animate-left add-to-fav" title="Favorite" product-slug="{{ $product->slug }}" href="">
                                             <i class="pe-7s-like"></i>
+                                        </a>
+                                        <a class="animate-top add-to-card" title="Add To Cart" href="" product-id="{{ $product->id }}" product-type="{{ $product->slug }}" product-slug="{{ $product->slug }}">
+                                            <i class="pe-7s-cart"></i>
                                         </a>
                                     </div>
                                 </div>
+                                <div class="product-content">
+                                    <h4><a href="{{ route('product.show', $product->slug) }}">{{ $product->name }}</a></h4>
+                                    <span>Rp.{{ number_format($product->price) }}</span>
+                                </div>
                             </div>
                         </div>
+                        @empty
+                        Tidak Ada Produk yang Ditemukan!
+                        @endforelse
                     </div>
-                    @empty
-                        No product found!
-                    @endforelse
+                </div>
+                <div id="grid-sidebar2" class="tab-pane fade">
+                    <div class="row">
+                        @forelse ($products as $product)
+                        <div class="col-lg-12">
+                            <div class="product-wrapper mb-30 single-product-list product-list-right-pr mb-60">
+                                <div class="product-img list-img-width">
+                                    <a href="{{ route('product.show', $product->slug) }}">
+                                        @if($product->firstMedia)
+                                        <img src="{{ asset('storage/images/products/' . $product->firstMedia->file_name ) }}" alt="{{ $product->name }}" width="150">
+                                        @else
+                                        <img src="{{ asset('frontend/assets/img/product/book/1.jpg' ) }}" alt="{{ $product->name }}" style="width: 100%;">
+                                        @endif
+                                    </a>
+                                    <span>hot</span>
+                                </div>
+                                <div class="product-content-list">
+                                    <div class="product-list-info">
+                                        <h4><a href="{{ route('product.show', $product->slug) }}">{{ $product->name }}</a></h4>
+                                        <span>Rp.{{ number_format($product->price) }}</span>
+                                        <p>{!! $product->description !!}</p>
+                                    </div>
+                                    <div class="product-list-cart-wishlist">
+                                        <div class="product-list-cart">
+                                            <a class="btn-hover list-btn-style add-to-card" product-id="{{ $product->id }}" product-type="{{ $product->slug }}" product-slug="{{ $product->slug }}">Tambahkan ke Keranjang</a>
+                                        </div>
+                                        <div class="product-list-wishlist">
+                                            <a class="btn-hover list-btn-wishlist add-to-fav" title="Favorite" product-slug="{{ $product->slug }}" href="">
+                                                <i class="pe-7s-like"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        Tidak Ada Produk yang Ditemukan!
+                        @endforelse
                     </div>
                 </div>
             </div>

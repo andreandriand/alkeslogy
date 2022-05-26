@@ -1,27 +1,27 @@
 @extends('layouts.frontend')
 @section('title', 'Order Detail')
 @section('content')
-	<!-- header end -->
-	<div class="breadcrumb-area pt-205 breadcrumb-padding pb-210" style="background-image: url({{ asset('frontend/assets/img/bg/breadcrumb.jpg') }})">
-		<div class="container">
-			<div class="breadcrumb-content text-center">
-				<h2>Order Received</h2>
-				<ul>
-					<li><a href="{{ url('/') }}">home</a></li>
-					<li>Order Received</li>
-				</ul>
-			</div>
+<!-- header end -->
+<div class="breadcrumb-area pt-205 breadcrumb-padding pb-210" style="background-image: url({{ asset('frontend/assets/img/bg/breadcrumb.jpg') }})">
+	<div class="container">
+		<div class="breadcrumb-content text-center">
+			<h2>Pesanan Diterima</h2>
+			<ul>
+				<li><a href="{{ url('/') }}">Beranda</a></li>
+				<li>Pesanan Diterima</li>
+			</ul>
 		</div>
 	</div>
-	<!-- checkout-area start -->
-	<div class="cart-main-area  ptb-100">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<h1 class="cart-heading">Your Order:</h4>
+</div>
+<!-- checkout-area start -->
+<div class="cart-main-area  ptb-100">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<h1 class="cart-heading">Pesanan Kamu :</h4>
 					<div class="row">
 						<div class="col-xl-3 col-lg-4">
-							<p class="text-dark mb-2" style="font-weight: normal; font-size:16px; text-transform: uppercase;">Billing Address</p>
+							<p class="text-dark mb-2" style="font-weight: normal; font-size:16px; text-transform: uppercase;">Penerima</p>
 							<address>
 								{{ $order->customer_first_name }} {{ $order->customer_last_name }}
 								<br> {{ $order->customer_address1 }}
@@ -32,7 +32,7 @@
 							</address>
 						</div>
 						<div class="col-xl-3 col-lg-4">
-							<p class="text-dark mb-2" style="font-weight: normal; font-size:16px; text-transform: uppercase;">Shipment Address</p>
+							<p class="text-dark mb-2" style="font-weight: normal; font-size:16px; text-transform: uppercase;">Alamat Pengiriman</p>
 							<address>
 								{{ $order->shipment->first_name }} {{ $order->shipment->last_name }}
 								<br> {{ $order->shipment->address1 }}
@@ -43,7 +43,7 @@
 							</address>
 						</div>
 						<div class="col-xl-3 col-lg-4">
-							<p class="text-dark mb-2" style="font-weight: normal; font-size:16px; text-transform: uppercase;">Details</p>
+							<p class="text-dark mb-2" style="font-weight: normal; font-size:16px; text-transform: uppercase;">Detail</p>
 							<address>
 								Invoice ID:
 								<span class="text-dark">#{{ $order->code }}</span>
@@ -59,27 +59,27 @@
 							<thead>
 								<tr>
 									<th>#</th>
-									<th>Code</th>
-									<th>product name</th>
-									<th>Quantity</th>
-									<th>Unit Cost</th>
+									<th>Kode</th>
+									<th>Nama Produk</th>
+									<th>Qty</th>
+									<th>Harga Satuan</th>
 									<th>Total</th>
 								</tr>
 							</thead>
 							<tbody>
 								@forelse ($order->orderItems as $item)
-									<tr>
-                                        <td>{{ $loop->iteration }}</td>
-										<td>{{ $item->weight }} (gram)</td>
-										<td>{{ $item->name }}</td>
-										<td>{{ $item->qty }}</td>
-										<td>Rp.{{  number_format($item->base_price) }}</td>
-										<td>Rp.{{ number_format($item->sub_total) }}</td>
-									</tr>
+								<tr>
+									<td>{{ $loop->iteration }}</td>
+									<td>{{ $item->weight }} (gram)</td>
+									<td>{{ $item->name }}</td>
+									<td>{{ $item->qty }}</td>
+									<td>Rp.{{ number_format($item->base_price) }}</td>
+									<td>Rp.{{ number_format($item->sub_total) }}</td>
+								</tr>
 								@empty
-									<tr>
-										<td colspan="6">Order item not found!</td>
-									</tr>
+								<tr>
+									<td colspan="6">Item Pesanan Tidak Ditemukan</td>
+								</tr>
 								@endforelse
 							</tbody>
 						</table>
@@ -91,10 +91,10 @@
 									<li> Subtotal
 										<span>Rp.{{ number_format($order->base_total_price) }}</span>
 									</li>
-									<li>Tax (10%)
+									<li>PPN (10%)
 										<span>Rp.{{ number_format($order->tax_amount) }}</span>
 									</li>
-									<li>Shipping Cost
+									<li>Ongkos Kirim
 										<span>Rp.{{ number_format($order->shipping_cost) }}</span>
 									</li>
 									<li>Total
@@ -102,13 +102,13 @@
 									</li>
 								</ul>
 								@if (!$order->isPaid())
-									<a href="{{ $order->payment_url }}">Proceed to payment</a>
+								<a href="{{ $order->payment_url }}">Lanjutkan Pembayaran</a>
 								@endif
 							</div>
 						</div>
 					</div>
-				</div>
 			</div>
 		</div>
 	</div>
+</div>
 @endsection
