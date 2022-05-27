@@ -16,7 +16,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-lg-3">
-				<h3 class="sidebar-title">User Menu</h3>
+				<h3 class="sidebar-title">Menu</h3>
 				<div class="sidebar-categories">
 					<ul>
 						<li><a href="{{ route('profile.index') }}">Profil</a></li>

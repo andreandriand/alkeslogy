@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function notification(Request $request){
+	public function notification(Request $request)
+	{
 		$payload = $request->getContent();
 		$notification = json_decode($payload);
 
@@ -25,7 +26,7 @@ class PaymentController extends Controller
 		$order = Order::where('code', $paymentNotification->order_id)->firstOrFail();
 
 		if ($order->isPaid()) {
-			return response(['message' => 'The order has been paid before'], 422);
+			return response(['message' => 'Pesanan telah dibayar'], 422);
 		}
 
 		$transaction = $paymentNotification->transaction_status;
@@ -99,39 +100,41 @@ class PaymentController extends Controller
 			);
 		}
 
-		$message = 'Payment status is : '. $paymentStatus;
+		$message = 'Status Pembayaran: ' . $paymentStatus;
 
 		$response = [
 			'code' => 200,
 			'message' => $message,
 		];
 
-		return response($response, 200);   
-    }
+		return response($response, 200);
+	}
 
-    public function completed(Request $request){
-        $code = $request->query('order_id');
+	public function completed(Request $request)
+	{
+		$code = $request->query('order_id');
 		$order = Order::where('code', $code)->firstOrFail();
 
 		if ($order->payment_status == Order::UNPAID) {
-			return redirect('payments/failed?order_id='. $code);
+			return redirect('payments/failed?order_id=' . $code);
 		}
 
 		return view('frontend.payments.success');
-    }
+	}
 
-    public function failed(Request $request){
-        $code = $request->query('order_id');
+	public function failed(Request $request)
+	{
+		$code = $request->query('order_id');
 		$order = Order::where('code', $code)->firstOrFail();
 
-		return redirect('orders/received/'. $order->id);
-    }
+		return redirect('orders/received/' . $order->id);
+	}
 
-    public function unfinish(Request $request){
-        $code = $request->query('order_id');
+	public function unfinish(Request $request)
+	{
+		$code = $request->query('order_id');
 		$order = Order::where('code', $code)->firstOrFail();
 
-		return redirect('orders/received/'. $order->id);
-    }
-
+		return redirect('orders/received/' . $order->id);
+	}
 }

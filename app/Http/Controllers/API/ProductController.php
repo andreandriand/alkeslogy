@@ -14,17 +14,17 @@ class ProductController extends BaseController
 
     public function index(Request $request)
     {
-        if((int)$request->req_page && (int)$request->req_page < 10){
+        if ((int)$request->req_page && (int)$request->req_page < 10) {
             $this->paginate = $request->req_page;
         }
 
         $products = Product::paginate($this->paginate);
 
         if ($q = $request->query('q')) {
-            $products = Product::where('name','LIKE', '%'. $request->query('q'). '%')
-                ->orWhere('description', 'LIKE', '%' . $request->query('q') . '%')    
-                ->paginate($this->paginate);            
-		}
+            $products = Product::where('name', 'LIKE', '%' . $request->query('q') . '%')
+                ->orWhere('description', 'LIKE', '%' . $request->query('q') . '%')
+                ->paginate($this->paginate);
+        }
 
         $meta = [
             'paginate' => $this->paginate,
@@ -32,18 +32,19 @@ class ProductController extends BaseController
             'total_pages' => $products->lastPage()
         ];
 
-        return $this->responseOk(ProductResource::collection($products),200,'success', $meta);
+        return $this->responseOk(ProductResource::collection($products), 200, 'Berhasil', $meta);
     }
 
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         $product = Product::with('media', 'category', 'tags')
             ->where('slug', $request->slug)
-            ->withCount('media','approvedReviews')
+            ->withCount('media', 'approvedReviews')
             ->withAvg('approvedReviews', 'rating')
             ->active()
             ->hasQuantity()
             ->firstOrFail();
 
-            return $this->responseOk(new ProductResource($product),200,'success');
+        return $this->responseOk(new ProductResource($product), 200, 'Berhasil');
     }
 }

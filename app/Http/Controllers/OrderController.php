@@ -13,8 +13,9 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function process(){
-        if (\Cart::isEmpty()) {
+	public function process()
+	{
+		if (\Cart::isEmpty()) {
 			return redirect()->route('cart.index');
 		}
 
@@ -22,7 +23,7 @@ class OrderController extends Controller
 
 		$items = \Cart::getContent();
 
-        $totalWeight = 0;
+		$totalWeight = 0;
 		foreach ($items as $item) {
 			$totalWeight += ($item->quantity * $item->associatedModel->weight);
 		}
@@ -30,7 +31,7 @@ class OrderController extends Controller
 		$provinces = $this->getProvinces();
 		$cities = isset(auth()->user()->city_id) ? $this->getCities(auth()->user()->province_id) : [];
 
-		return view('frontend.orders.checkout', compact('items','totalWeight', 'provinces', 'cities'));
+		return view('frontend.orders.checkout', compact('items', 'totalWeight', 'provinces', 'cities'));
 	}
 
 	public function cities(Request $request)
@@ -38,20 +39,20 @@ class OrderController extends Controller
 		$cities = $this->getCities($request->query('province_id'));
 		return response()->json(['cities' => $cities]);
 	}
-	
+
 	public function shippingCost(Request $request)
 	{
 		$items = \Cart::getContent();
-		
-        $totalWeight = 0;
+
+		$totalWeight = 0;
 		foreach ($items as $item) {
 			$totalWeight += ($item->quantity * $item->associatedModel->weight);
 		}
 		$request["city_id"] = "114";
-        $destination = $request->input('city_id');
+		$destination = $request->input('city_id');
 		return $this->getShippingCost($destination, $totalWeight);
 	}
-	
+
 	private function getShippingCost($destination, $weight)
 	{
 		$params = [
@@ -63,14 +64,14 @@ class OrderController extends Controller
 		$results = [];
 		foreach ($this->couriers as $code => $courier) {
 			$params['courier'] = $code;
-			
-            $response = $this->rajaOngkirRequest('cost', $params, 'POST');
-			
+
+			$response = $this->rajaOngkirRequest('cost', $params, 'POST');
+
 			if (!empty($response['rajaongkir']['results'])) {
 				foreach ($response['rajaongkir']['results'] as $cost) {
 					if (!empty($cost['costs'])) {
 						foreach ($cost['costs'] as $costDetail) {
-							$serviceName = strtoupper($cost['code']) .' - '. $costDetail['service'];
+							$serviceName = strtoupper($cost['code']) . ' - ' . $costDetail['service'];
 							$costAmount = $costDetail['cost'][0]['value'];
 							$etd = $costDetail['cost'][0]['etd'];
 
@@ -94,7 +95,7 @@ class OrderController extends Controller
 			'weight' => $weight,
 			'results' => $results,
 		];
-		
+
 		return $response;
 	}
 
@@ -103,8 +104,8 @@ class OrderController extends Controller
 		\Cart::removeConditionsByType('shipping');
 
 		$items = \Cart::getContent();
-		
-        $totalWeight = 0;
+
+		$totalWeight = 0;
 		foreach ($items as $item) {
 			$totalWeight += ($item->quantity * $item->associatedModel->weight);
 		}
@@ -113,9 +114,9 @@ class OrderController extends Controller
 		// $destination = "179";
 		$shippingService = $request->get('shipping_service');
 		$destination = $request->get('city_id');
-		
+
 		$shippingOptions = $this->getShippingCost($destination, $totalWeight);
-		
+
 		// dd($shippingOptions);
 		$selectedShipping = null;
 		if ($shippingOptions['results']) {
@@ -132,14 +133,14 @@ class OrderController extends Controller
 		$data = [];
 		if ($selectedShipping) {
 			$status = 200;
-			$message = 'Success set shipping cost';
+			$message = 'Berhasil Mendapatkan Ongkos Kirim';
 
 			$this->addShippingCostToCart($selectedShipping['service'], $selectedShipping['cost']);
 
 			$data['total'] = number_format(\Cart::getTotal());
 		} else {
 			$status = 400;
-			$message = 'Failed to set shipping cost';
+			$message = 'Gagal Mendapatkan Ongkos Kirim';
 		}
 
 		$response = [
@@ -153,7 +154,7 @@ class OrderController extends Controller
 
 		return $response;
 	}
-	
+
 	private function addShippingCostToCart($serviceName, $cost)
 	{
 		$condition = new \Darryldecode\Cart\CartCondition(
@@ -161,7 +162,7 @@ class OrderController extends Controller
 				'name' => $serviceName,
 				'type' => 'shipping',
 				'target' => 'total',
-				'value' => '+'. $cost,
+				'value' => '+' . $cost,
 			]
 		);
 
@@ -185,10 +186,11 @@ class OrderController extends Controller
 		return $selectedShipping;
 	}
 
-	public function checkout(Request $request){
+	public function checkout(Request $request)
+	{
 		$params = $request->except('_token');
 
-		$order = \DB::transaction(function() use ($params) {
+		$order = \DB::transaction(function () use ($params) {
 			$destination = isset($params['ship_to']) ? $params['shipping_city_id'] : $params['city_id'];
 			$items = \Cart::getContent();
 
@@ -197,14 +199,14 @@ class OrderController extends Controller
 				$totalWeight += ($item->quantity * $item->associatedModel->weight);
 			}
 
-			$selectedShipping = $this->getSelectedShipping($destination,$totalWeight, $params['shipping_service']);
-			
+			$selectedShipping = $this->getSelectedShipping($destination, $totalWeight, $params['shipping_service']);
+
 			$baseTotalPrice = \Cart::getSubTotal();
 			$shippingCost = $selectedShipping['cost'];
 			$discountAmount = 0;
 			$discountPercent = 0;
 			$grandTotal = ($baseTotalPrice + $shippingCost) - $discountAmount;
-	
+
 			$orderDate = date('Y-m-d H:i:s');
 			$paymentDue = (new \DateTime($orderDate))->modify('+3 day')->format('Y-m-d H:i:s');
 
@@ -276,7 +278,7 @@ class OrderController extends Controller
 					];
 
 					$orderItem = OrderItem::create($orderItemParams);
-					
+
 					if ($orderItem) {
 						$product = Product::findOrFail($product->id);
 						$product->quantity -= $item->quantity;
@@ -285,7 +287,7 @@ class OrderController extends Controller
 				}
 			}
 
-			
+
 
 			$shippingFirstName = isset($params['ship_to']) ? $params['shipping_first_name'] : $params['first_name'];
 			$shippingLastName = isset($params['ship_to']) ? $params['shipping_last_name'] : $params['last_name'];
@@ -316,7 +318,6 @@ class OrderController extends Controller
 			Shipment::create($shipmentParams);
 
 			return $order;
-
 		});
 
 		if (!isset($order)) {
@@ -352,20 +353,18 @@ class OrderController extends Controller
 			]
 		];
 
-		try{
+		try {
 			$snap = Snap::createTransaction($transaction_details);
-	
+
 			$order->payment_token = $snap->token;
 			$order->payment_url = $snap->redirect_url;
 			$order->save();
 
-			header('Location: '. $order->payment_url);
+			header('Location: ' . $order->payment_url);
 			exit;
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
-
 	}
 
 	public function received($orderId)
@@ -377,7 +376,8 @@ class OrderController extends Controller
 		return view('frontend.orders.received', compact('order'));
 	}
 
-	public function index(){
+	public function index()
+	{
 		$orders = Order::where('user_id', auth()->id())
 			->paginate(10);
 
@@ -387,8 +387,7 @@ class OrderController extends Controller
 	public function show($id)
 	{
 		$order = Order::where('user_id', auth()->id())->findOrFail($id);
-		
+
 		return view('frontend.orders.show', compact('order'));
 	}
-	
 }

@@ -7,27 +7,29 @@ use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
-    public function responseOk($result, $code = 200,$message = 'Success', $meta = []){
+    public function responseOk($result, $code = 200, $message = 'Berhasil', $meta = [])
+    {
         $response = [
             'code' => $code,
             'data' => $result,
             'message' => $message,
         ];
 
-        if($meta){
+        if ($meta) {
             $response['meta'] = $meta;
         }
 
         return response()->json($response, $code);
     }
 
-    public function responseError($error, $code = 422,$errorDetails = []){
+    public function responseError($error, $code = 422, $errorDetails = [])
+    {
         $response = [
             'code' => $code,
             'error' => $error
         ];
 
-        if(!empty($errorDetails)){
+        if (!empty($errorDetails)) {
             $response['errorDetails'] = $errorDetails;
         }
 

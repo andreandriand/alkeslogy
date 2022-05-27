@@ -215,7 +215,7 @@
 									</tr>
 									<tr class="cart-subtotal">
 										<th>Pajak</th>
-										<td><span class="amount">{{ number_format(\Cart::getSubTotal()) }}</span></td>
+										<td><span class="amount">{{ number_format(\Cart::getSubTotal() * 0.1) }}</span></td>
 									</tr>
 									<tr class="cart-subtotal">
 										<th>Ongkos Kirim ({{ $totalWeight }} gram)</th>
@@ -224,7 +224,7 @@
 									</tr>
 									<tr class="order-total">
 										<th>Total Pesanan</th>
-										<td><strong><span class="total-amount">{{ number_format(\Cart::getTotal()) }}</span></strong>
+										<td><strong><span class="total-amount">{{ number_format(\Cart::getTotal() + (\Cart::getTotal() * 0.1)) }}</span></strong>
 										</td>
 									</tr>
 								</tfoot>

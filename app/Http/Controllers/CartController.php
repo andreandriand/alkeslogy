@@ -27,47 +27,47 @@ class CartController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {		
+    {
         $product = Product::findOrFail($request->product_id);
-        
+
         $carts = \Cart::getContent();
-		$itemQuantity = 0;
-		if ($carts) {
-			foreach ($carts as $cart) {
-				if ($cart->name == $product->name) {
-					$itemQuantity = $cart->quantity;
-					break;
-				}
-			}
+        $itemQuantity = 0;
+        if ($carts) {
+            foreach ($carts as $cart) {
+                if ($cart->name == $product->name) {
+                    $itemQuantity = $cart->quantity;
+                    break;
+                }
+            }
         }
 
         $itemQuantity +=  $request->qty;
 
         try {
             if ($product->quantity < $itemQuantity) {
-                throw new OutOfStockException('produk '. $product->name .' kosong !');
+                throw new OutOfStockException('produk ' . $product->name . ' kosong !');
             }
         } catch (\App\Exceptions\OutOfStockException $exception) {
             return redirect()->back()->with([
-                    'message' => $exception->getMessage(),
-                    'alert-type' => 'danger',
-                ]);
+                'message' => $exception->getMessage(),
+                'alert-type' => 'danger',
+            ]);
         }
-		
-		$item = [
-			'id' => md5($product->id),
-			'name' => $product->name,
-			'price' => $product->price,
-			'quantity' => $request->qty,
-			'associatedModel' => $product,
-		];
+
+        $item = [
+            'id' => md5($product->id),
+            'name' => $product->name,
+            'price' => $product->price,
+            'quantity' => $request->qty,
+            'associatedModel' => $product,
+        ];
 
         \Cart::add($item);
-        
-		return redirect()->back()->with([
-            'message' => 'success added to cart !',
-            'alert-type' => 'success',
-            ]);
+
+        return redirect()->back()->with([
+            'message' => 'Berhasil Ditambahkan ke Keranjang!',
+            'alert-type' => 'Berhasil Ditambahkan ke Keranjang!',
+        ]);
     }
 
     /**
@@ -81,22 +81,22 @@ class CartController extends Controller
     {
         $params = $request->except('_token');
 
-        if($items = $params['items']){
-            foreach($items as $cartId => $item){
+        if ($items = $params['items']) {
+            foreach ($items as $cartId => $item) {
                 $carts = \Cart::getContent();
 
                 try {
                     if ($carts[$cartId]->associatedModel->quantity < $item['quantity']) {
-                        throw new OutOfStockException('produk '. $carts[$cartId]->associatedModel->name .' tersisa ' . $carts[$cartId]->associatedModel->quantity);
+                        throw new OutOfStockException('produk ' . $carts[$cartId]->associatedModel->name . ' tersisa ' . $carts[$cartId]->associatedModel->quantity);
                     }
                 } catch (\App\Exceptions\OutOfStockException $exception) {
                     return redirect()->back()->with([
-                            'message' => $exception->getMessage(),
-                            'alert-type' => 'danger',
-                        ]);
+                        'message' => $exception->getMessage(),
+                        'alert-type' => 'danger',
+                    ]);
                 }
 
-                \Cart::update($cartId,[
+                \Cart::update($cartId, [
                     'quantity' => [
                         'relative' => false,
                         'value' => $item['quantity'],
@@ -105,7 +105,7 @@ class CartController extends Controller
             }
 
             return redirect()->back()->with([
-                'message' => 'success updated !',
+                'message' => 'Keranjang Telah Diperbarui',
                 'alert-type' => 'info'
             ]);
         }
@@ -122,7 +122,7 @@ class CartController extends Controller
         \Cart::remove($cartId);
 
         return redirect()->back()->with([
-            'message' => 'success deleted !',
+            'message' => 'Produk Berhasil Dihapus',
             'alert-type' => 'danger'
         ]);
     }

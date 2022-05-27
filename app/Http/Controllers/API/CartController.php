@@ -14,11 +14,11 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class CartController extends BaseController
 {
-    public function index(Request $request,$sessionKey = null)
+    public function index(Request $request, $sessionKey = null)
     {
         if ($sessionKey = $request->user()->id) {
             $cart = \Cart::session($sessionKey)->getContent();
-        }else{
+        } else {
             $cart = \Cart::getContent();
         }
 
@@ -71,7 +71,7 @@ class CartController extends BaseController
             'total' => $total,
         ];
 
-        return $this->responseOk($carts,200,'success');
+        return $this->responseOk($carts, 200, 'Berhasil');
     }
 
     public function store(Request $request, $sessionKey = 0)
@@ -81,45 +81,45 @@ class CartController extends BaseController
             'qty' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->responseError('add item failed !', 422, $validator->errors());
         }
 
         $params = $request->all();
-        $product = Product::where('slug',$params['slug'])->firstOrFail();
-        
+        $product = Product::where('slug', $params['slug'])->firstOrFail();
+
         $carts = \Cart::getContent();
-		$itemQuantity = 0;
-		if ($carts) {
-			foreach ($carts as $cart) {
-				if ($cart->id == $product->id) {
-					$itemQuantity = $cart->quantity;
-					break;
-				}
-			}
+        $itemQuantity = 0;
+        if ($carts) {
+            foreach ($carts as $cart) {
+                if ($cart->id == $product->id) {
+                    $itemQuantity = $cart->quantity;
+                    break;
+                }
+            }
         }
 
         $itemQuantity +=  $request->qty;
 
         if ($product->quantity < $itemQuantity) {
-			// throw new \App\Exceptions\OutOfStockException('The product '. $product->sku .' is out of stock');
-		}
-		
-		$item = [
-			'id' => md5($product->id),
-			'name' => $product->name,
-			'price' => $product->price,
-			'quantity' => $request->qty,
-			'associatedModel' => $product,
+            // throw new \App\Exceptions\OutOfStockException('The product '. $product->sku .' is out of stock');
+        }
+
+        $item = [
+            'id' => md5($product->id),
+            'name' => $product->name,
+            'price' => $product->price,
+            'quantity' => $request->qty,
+            'associatedModel' => $product,
         ];
-        
+
         if ($sessionKey = $request->user()->id) {
             \Cart::session($sessionKey)->add($item);
             $carts = \Cart::getContent();
-            return $this->responseOk(true,200,'success');
-        }else{
+            return $this->responseOk(true, 200, 'Berhasil');
+        } else {
             \Cart::add($item);
-            return $this->responseOk(true, 200,'success');
+            return $this->responseOk(true, 200, 'Berhasil');
         }
 
         return $this->responseError('add item failed !', 422);
@@ -132,35 +132,35 @@ class CartController extends BaseController
             'quantity' => 'required|numeric'
         ]);
 
-        if($validator->fails()){
-            return $this->responseError('update failed !', 422,$validator->errors());
+        if ($validator->fails()) {
+            return $this->responseError('update failed !', 422, $validator->errors());
         }
 
         $sessionKey = $request->user()->id;
 
         if ($sessionKey) {
             $carts = \Cart::session($sessionKey)->getContent();
-        }else{
+        } else {
             $carts = \Cart::getContent();
         }
 
         $item = !(empty($carts[$id])) ? $carts[$id] : null;
-        if(!$item){
+        if (!$item) {
             return $this->responseError('item not found !', 404);
         }
 
-        if ($item->quantity < $params['quantity'] ) {
+        if ($item->quantity < $params['quantity']) {
             // throw new \App\Exceptions\OutOfStockException('The product '. $carts[$cartId]->associatedModel->sku .' is out of stock');
         }
 
-        $cartUpdate = \Cart::update($id,[
+        $cartUpdate = \Cart::update($id, [
             'quantity' => [
                 'relative' => false,
                 'value' => $params['quantity'],
             ],
         ]);
-        
-        return $this->responseOk($cartUpdate, 200,'the item has been updated !');
+
+        return $this->responseOk($cartUpdate, 200, 'the item has been updated !');
     }
 
     public function destroy(Request $request, $id)
@@ -169,27 +169,28 @@ class CartController extends BaseController
 
         if ($sessionKey) {
             $carts = \Cart::session($sessionKey)->getContent();
-        }else{
+        } else {
             $carts = \Cart::getContent();
         }
 
         $item = !(empty($carts[$id])) ? $carts[$id] : null;
-        if(!$item){
+        if (!$item) {
             return $this->responseError('item not found !', 404);
         }
 
         if ($sessionKey) {
             $cartDelete = \Cart::session($sessionKey)->remove($id);
-            return  $this->responseOk($cartDelete, 200,'the item has been deleted !');
-        }else {
+            return  $this->responseOk($cartDelete, 200, 'the item has been deleted !');
+        } else {
             $cartDelete = \Cart::remove($id);
-            return  $this->responseOk($cartDelete, 200,'the item has been deleted !');
+            return  $this->responseOk($cartDelete, 200, 'the item has been deleted !');
         }
 
         $this->responseError('deleted item failed !', 400);
     }
 
-    public function clear(Request $request){
+    public function clear(Request $request)
+    {
 
         $sessionKey = $request->user()->id;
 
@@ -199,12 +200,11 @@ class CartController extends BaseController
 
         $cartDestroy = \Cart::clear();
 
-        if($cartDestroy){
+        if ($cartDestroy) {
             return $this->responseOk($cartDestroy, 200, 'the item has been cleared !');
         }
 
         return $this->responseError('clear cart item failed !', 400);
-        
     }
 
     public function shippingOptions(Request $request)
@@ -217,7 +217,7 @@ class CartController extends BaseController
 
         $sessionKey = $request->user()->id;
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->responseError('get shipping options failed !', 422, $validator->errors());
         }
 
@@ -227,67 +227,65 @@ class CartController extends BaseController
             \Cart::isEmpty();
         }
 
-    try {
+        try {
 
-        $totalWeight = 0;
-        if ($sessionKey) {
-            $items = \Cart::session($sessionKey)->getContent();
-        } else {
-            $items = \Cart::getContent();
-        }
+            $totalWeight = 0;
+            if ($sessionKey) {
+                $items = \Cart::session($sessionKey)->getContent();
+            } else {
+                $items = \Cart::getContent();
+            }
 
-        foreach ($items as $item) {
-            $totalWeight += ($item->quantity * $item->associatedModel->weight);
-        }
+            foreach ($items as $item) {
+                $totalWeight += ($item->quantity * $item->associatedModel->weight);
+            }
 
-        $params = [
-            'origin' => env('RAJAONGKIR_ORIGIN'),
-            'destination' => $parameter['city_id'],
-            'weight' => $totalWeight,
-        ];
+            $params = [
+                'origin' => env('RAJAONGKIR_ORIGIN'),
+                'destination' => $parameter['city_id'],
+                'weight' => $totalWeight,
+            ];
 
-        $results = [];
-        foreach ($this->couriers as $code => $courier) {
-            $params['courier'] = $code;
-            
-            $response = $this->rajaOngkirRequest('cost', $params, 'POST');
-            
-            if (!empty($response['rajaongkir']['results'])) {
-                foreach ($response['rajaongkir']['results'] as $cost) {
-                    if (!empty($cost['costs'])) {
-                        foreach ($cost['costs'] as $costDetail) {
-                            $serviceName = strtoupper($cost['code']) .' - '. $costDetail['service'];
-                            $costAmount = $costDetail['cost'][0]['value'];
-                            $etd = $costDetail['cost'][0]['etd'];
+            $results = [];
+            foreach ($this->couriers as $code => $courier) {
+                $params['courier'] = $code;
 
-                            $result = [
-                                'service' => $serviceName,
-                                'cost' => $costAmount,
-                                'etd' => $etd,
-                                'courier' => $code,
-                            ];
+                $response = $this->rajaOngkirRequest('cost', $params, 'POST');
 
-                            $results[] = $result;
+                if (!empty($response['rajaongkir']['results'])) {
+                    foreach ($response['rajaongkir']['results'] as $cost) {
+                        if (!empty($cost['costs'])) {
+                            foreach ($cost['costs'] as $costDetail) {
+                                $serviceName = strtoupper($cost['code']) . ' - ' . $costDetail['service'];
+                                $costAmount = $costDetail['cost'][0]['value'];
+                                $etd = $costDetail['cost'][0]['etd'];
+
+                                $result = [
+                                    'service' => $serviceName,
+                                    'cost' => $costAmount,
+                                    'etd' => $etd,
+                                    'courier' => $code,
+                                ];
+
+                                $results[] = $result;
+                            }
                         }
                     }
                 }
             }
+
+            $response = [
+                'origin' => $params['origin'],
+                'destination' => $params['destination'],
+                'weight' => $totalWeight,
+                'results' => $results,
+            ];
+
+            return $this->responseOk($response, 200, 'Berhasil !');
+        } catch (\GuzzleHttp\Exception\RequestException $err) {
+            return $this->responseError($err->getMessage(), 400);
         }
-
-        $response = [
-            'origin' => $params['origin'],
-            'destination' => $params ['destination'],
-            'weight' => $totalWeight,
-            'results' => $results,
-        ];
-      
-        return $this->responseOk($response, 200,'success !');
-
-    } catch (\GuzzleHttp\Exception\RequestException $err) {
-        return $this->responseError($err->getMessage(), 400);
-    }
-    return $this->responseError('get shipping options failed !', 400);
-
+        return $this->responseError('Jasa Kirim Tidak Tersedia', 400);
     }
 
     public function setShipping(Request $request)
@@ -299,7 +297,7 @@ class CartController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->responseError('Set shipping failed', 422, $validator->errors());
+            return $this->responseError('Pengiriman Tidak Tersedia', 422, $validator->errors());
         }
 
         $sessionKey = $request->user()->id;
@@ -333,14 +331,14 @@ class CartController extends BaseController
         $results = [];
         foreach ($this->couriers as $code => $courier) {
             $params['courier'] = $code;
-            
+
             $response = $this->rajaOngkirRequest('cost', $params, 'POST');
-            
+
             if (!empty($response['rajaongkir']['results'])) {
                 foreach ($response['rajaongkir']['results'] as $cost) {
                     if (!empty($cost['costs'])) {
                         foreach ($cost['costs'] as $costDetail) {
-                            $serviceName = strtoupper($cost['code']) .' - '. $costDetail['service'];
+                            $serviceName = strtoupper($cost['code']) . ' - ' . $costDetail['service'];
                             $costAmount = $costDetail['cost'][0]['value'];
                             $etd = $costDetail['cost'][0]['etd'];
 
@@ -381,31 +379,30 @@ class CartController extends BaseController
 
         if ($selectedShipping) {
             $status = 200;
-            $message = 'Success set shipping cost';
+            $message = 'Berhasil Mendapatkan Ongkos Kirim';
 
             $condition = new \Darryldecode\Cart\CartCondition(
                 [
                     'name' => 'shipping_cost',
                     'type' => 'shipping',
                     'target' => 'total',
-                    'value' => '+'. $selectedShipping['cost'],
+                    'value' => '+' . $selectedShipping['cost'],
                 ]
             );
-    
+
             \Cart::condition($condition);
 
             if ($sessionKey) {
-                $carts=  \Cart::session($sessionKey)->getTotal();
+                $carts =  \Cart::session($sessionKey)->getTotal();
             }
-    
+
             $carts = \Cart::getTotal();
 
             $data['total'] = number_format($carts);
 
-            return $this->responseOk($data, 200, 'success');
+            return $this->responseOk($data, 200, 'Berhasil');
         }
 
-        return $this->responseError('Failed to set shipping cost', 400);
-
+        return $this->responseError('Gagal Mendapatkan Ongkos Kirim', 400);
     }
 }

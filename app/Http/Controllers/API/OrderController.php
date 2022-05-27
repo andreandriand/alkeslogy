@@ -12,7 +12,8 @@ use App\Http\Controllers\API\BaseController;
 
 class OrderController extends BaseController
 {
-    public function checkout(Request $request){
+    public function checkout(Request $request)
+    {
         $params = $request->user()->toArray();
         $params = array_merge($params, $request->all());
 
@@ -21,20 +22,20 @@ class OrderController extends BaseController
         $orders = \DB::transaction(
             function () use ($params, $sessionKey) {
                 $destination = isset($params['ship_to']) ? $params['shipping_city_id'] : $params['city_id'];
-            
+
                 if ($sessionKey) {
                     \Cart::session($sessionKey)->isEmpty();
                 } else {
                     \Cart::isEmpty();
                 }
-        
+
                 $totalWeight = 0;
                 if ($sessionKey) {
                     $items = \Cart::session($sessionKey)->getContent();
                 } else {
                     $items = \Cart::getContent();
                 }
-        
+
                 foreach ($items as $item) {
                     $totalWeight += ($item->quantity * $item->associatedModel->weight);
                 }
@@ -44,35 +45,35 @@ class OrderController extends BaseController
                     'destination' => $destination,
                     'weight' => $totalWeight,
                 ];
-        
+
                 $results = [];
                 foreach ($this->couriers as $code => $courier) {
                     $param['courier'] = $code;
-                    
+
                     $response = $this->rajaOngkirRequest('cost', $param, 'POST');
-                    
+
                     if (!empty($response['rajaongkir']['results'])) {
                         foreach ($response['rajaongkir']['results'] as $cost) {
                             if (!empty($cost['costs'])) {
                                 foreach ($cost['costs'] as $costDetail) {
-                                    $serviceName = strtoupper($cost['code']) .' - '. $costDetail['service'];
+                                    $serviceName = strtoupper($cost['code']) . ' - ' . $costDetail['service'];
                                     $costAmount = $costDetail['cost'][0]['value'];
                                     $etd = $costDetail['cost'][0]['etd'];
-        
+
                                     $result = [
                                         'service' => $serviceName,
                                         'cost' => $costAmount,
                                         'etd' => $etd,
                                         'courier' => $code,
                                     ];
-        
+
                                     $results[] = $result;
                                 }
                             }
                         }
                     }
                 }
-        
+
                 $shippingOptions = [
                     'origin' => $param['origin'],
                     'destination' => $destination,
@@ -91,7 +92,7 @@ class OrderController extends BaseController
                         }
                     }
                 }
-                
+
                 if ($sessionKey) {
                     $condition = new \Darryldecode\Cart\CartCondition(
                         [
@@ -101,7 +102,7 @@ class OrderController extends BaseController
                             'value' => '10%',
                         ]
                     );
-            
+
                     if ($sessionKey) {
                         \Cart::session($sessionKey)->removeConditionsByType('tax');
                         \Cart::session($sessionKey)->condition($condition);
@@ -111,7 +112,7 @@ class OrderController extends BaseController
                     }
                     $items = \Cart::session($sessionKey)->getContent();
                 }
-        
+
                 $condition = new \Darryldecode\Cart\CartCondition(
                     [
                         'name' => 'TAX 10%',
@@ -120,7 +121,7 @@ class OrderController extends BaseController
                         'value' => '10%',
                     ]
                 );
-        
+
                 if ($sessionKey) {
                     \Cart::session($sessionKey)->removeConditionsByType('tax');
                     \Cart::session($sessionKey)->condition($condition);
@@ -134,33 +135,33 @@ class OrderController extends BaseController
                 foreach ($items as $item) {
                     $baseTotalPrice += $item->getPriceSum();
                 }
-        
+
                 if ($sessionKey) {
                     \Cart::session($sessionKey)->getSubTotal();
                 }
-        
+
                 \Cart::getSubTotal();
 
                 if ($sessionKey) {
                     $taxAmount = (float) \Cart::session($sessionKey)->getCondition('TAX 10%')->parsedRawValue;
                 }
-        
+
                 $taxAmount = (float) \Cart::getCondition('TAX 10%')->parsedRawValue;
 
                 if ($sessionKey) {
                     $taxPercent = (float) \Cart::session($sessionKey)->getCondition('TAX 10%')->getValue();
                 }
-        
+
                 $taxPercent = (float) \Cart::getCondition('TAX 10%')->getValue();
-        
+
                 $shippingCost = $selectedShipping['cost'];
                 $discountAmount = 0;
                 $discountPercent = 0;
                 $grandTotal = ($baseTotalPrice + $taxAmount + $shippingCost) - $discountAmount;
-        
+
                 $orderDate = date('Y-m-d H:i:s');
                 $paymentDue = (new \DateTime($orderDate))->modify('+7 day')->format('Y-m-d H:i:s');
-        
+
                 $orderParams = [
                     'user_id' => auth()->user()->id,
                     'code' => Order::generateCode(),
@@ -188,9 +189,9 @@ class OrderController extends BaseController
                     'shipping_courier' => $selectedShipping['courier'],
                     'shipping_service_name' => $selectedShipping['service'],
                 ];
-        
+
                 $order = Order::create($orderParams);
-                
+
                 if ($sessionKey) {
                     $condition = new \Darryldecode\Cart\CartCondition(
                         [
@@ -200,7 +201,7 @@ class OrderController extends BaseController
                             'value' => '10%',
                         ]
                     );
-            
+
                     if ($sessionKey) {
                         \Cart::session($sessionKey)->removeConditionsByType('tax');
                         \Cart::session($sessionKey)->condition($condition);
@@ -210,7 +211,7 @@ class OrderController extends BaseController
                     }
                     $cartItems = \Cart::session($sessionKey)->getContent();
                 }
-        
+
                 $condition = new \Darryldecode\Cart\CartCondition(
                     [
                         'name' => 'TAX 10%',
@@ -219,7 +220,7 @@ class OrderController extends BaseController
                         'value' => '10%',
                     ]
                 );
-        
+
                 if ($sessionKey) {
                     \Cart::session($sessionKey)->removeConditionsByType('tax');
                     \Cart::session($sessionKey)->condition($condition);
@@ -257,7 +258,7 @@ class OrderController extends BaseController
                         ];
 
                         $orderItem = OrderItem::create($orderItemParams);
-                        
+
                         if ($orderItem) {
                             $product = Product::findOrFail($product->id);
                             $product->quantity -= $item->quantity;
@@ -265,7 +266,7 @@ class OrderController extends BaseController
                         }
                     }
                 }
-       
+
                 $this->initPaymentGateway();
 
                 $customerDetails = [
@@ -274,7 +275,7 @@ class OrderController extends BaseController
                     'email' => $order->customer_email,
                     'phone' => $order->customer_phone,
                 ];
-        
+
                 $data_payment = [
                     'enable_payments' => Payment::PAYMENT_CHANNELS,
                     'transaction_details' => [
@@ -288,9 +289,9 @@ class OrderController extends BaseController
                         'duration' => \App\Models\Payment::EXPIRY_DURATION,
                     ],
                 ];
-        
+
                 $snap = \Midtrans\Snap::createTransaction($data_payment);
-                
+
                 if ($snap->token) {
                     $order->payment_token = $snap->token;
                     $order->payment_url = $snap->redirect_url;
@@ -325,23 +326,23 @@ class OrderController extends BaseController
                 ];
 
                 Shipment::create($shipmentParams);
-    
+
                 return $order;
             }
         );
-        
+
         if ($orders) {
             if ($sessionKey) {
                 \Cart::session($sessionKey)->clearCartConditions();
                 \Cart::session($sessionKey)->clear();
             }
-    
+
             \Cart::clearCartConditions();
             \Cart::clear();
 
-            return $this->responseOk($orders, 200, 'success');
+            return $this->responseOk($orders, 200, 'Berhasil');
         }
 
-        return $this->responseError('Order process failed, 422');
+        return $this->responseError('Pesanan Gagal, 422');
     }
 }

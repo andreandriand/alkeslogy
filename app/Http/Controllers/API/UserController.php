@@ -17,11 +17,11 @@ class UserController extends BaseController
             'password' => ['required', 'string']
         ]);
 
-        if($validator->fails()){
-            return $this->responseError('Login Failed !', 422, $validator->errors());
+        if ($validator->fails()) {
+            return $this->responseError('Gagal Masuk !', 422, $validator->errors());
         }
 
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = auth()->user();
 
             $response = [
@@ -29,11 +29,10 @@ class UserController extends BaseController
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
             ];
-    
-            return $this->responseOk($response);
 
-        }else {
-            return $this->responseError('wrong email or password !', 401);
+            return $this->responseOk($response);
+        } else {
+            return $this->responseError('Email atau Password Salah !', 401);
         }
     }
 
@@ -56,8 +55,8 @@ class UserController extends BaseController
         ];
 
         if (!$user = User::create($params)) {
-            return $this->responseError('Registration failed', 400);
-        } 
+            return $this->responseError('Registrasi Gagal', 400);
+        }
 
         $token = $user->createToken('MyToken')->accessToken;
 
@@ -78,6 +77,6 @@ class UserController extends BaseController
     {
         $request->user()->token()->revoke();
 
-        return $this->responseOk(null, 200, 'Logged out successfully.');
+        return $this->responseOk(null, 200, 'Berhasil Logout.');
     }
 }

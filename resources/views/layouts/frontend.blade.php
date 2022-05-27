@@ -42,7 +42,7 @@
                 <div class="header-bottom-wrapper">
                     <div class="logo-2 furniture-logo ptb-30">
                         <a href="/">
-                            <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
+                            <img height="50" style="transform:scale(1);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
                         </a>
                     </div>
                     <div class="menu-style-2 furniture-menu menu-hover">
@@ -60,9 +60,6 @@
                                         <li><a href="{{ route('shop.index', $category_menu->slug) }}">{{ $category_menu->name }}</a></li>
                                         @endforeach
                                     </ul>
-                                </li>
-                                <li>
-                                    <a href="#">Tentang Kami</a>
                                 </li>
                             </ul>
                         </nav>
@@ -118,7 +115,7 @@
                             <nav id="mobile-menu-active">
                                 <ul class="menu-overflow">
                                     <li>
-                                        <a href="#">HOME</a>
+                                        <a href="#">Beranda</a>
                                     </li>
                                     <li>
                                         <a href="{{ route('shop.index') }}">Belanja</a>
@@ -130,7 +127,6 @@
                                             @endforeach
                                         </ul>
                                     </li>
-                                    <li><a href="#"> Kontak </a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -193,17 +189,17 @@
             <div class="container-fluid">
                 <div class="widget-wrapper">
                     <div class="footer-widget mb-30">
-                        <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
+                        <img height="60" style="transform:scale(1);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
                         <div class="footer-about-2">
-                            <p>Dapatkan Peralatan Kesahatan Terbaik Disini <br>Disini tempat mencari segala kebutuhan kesehatan anda. <br> Pelopor kesehatan dimulai dari anda. <br> Demi dunia yang lebih sehat</p>
+                            <p>Dapatkan peralatan kesehatan terbaik disini <br>Alkeslogy menyediakan berbagai peralatan medis untuk anda <br> Pelopor kesehatan dimulai dari diri anda. <br> Mencegah lebih baik daripada mengobati </p>
                         </div>
                     </div>
                     <div class="footer-widget mb-30">
-                        <h3 class="footer-widget-title-5">Kontak Kami</h3>
+                        <h3 class="footer-widget-title-5">Hubungi Kami</h3>
                         <div class="footer-info-wrapper-3">
                             <div class="footer-address-furniture">
                                 <div class="footer-info-icon3">
-                                    <span>Alamat : </span>
+                                    <span>Alamat: </span>
                                 </div>
                                 <div class="footer-info-content3">
                                     <p>Jl. Raya Babatan Sampurna, Babatan, <br> Kec. Wiyung, Kota SBY <br>Jawa Timur - 60227</p>

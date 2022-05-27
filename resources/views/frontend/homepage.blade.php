@@ -10,7 +10,7 @@
             <div class="carousel-caption d-none d-md-block">
                 <h5 class="text-white">{{ $slide->title }}</h5>
                 <p>{!! $slide->body !!}</p>
-                <a class="furniture-slider-btn btn-hover animated text-white" style="border: 1px solid #fff;" href="{{ $slide->url }}">Go</a>
+                <a class="furniture-slider-btn btn-hover animated text-white" style="border: 1px solid #fff;" href="{{ $slide->url }}">Kirim</a>
             </div>
         </div>
         @endforeach
